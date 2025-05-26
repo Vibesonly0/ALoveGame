@@ -1,0 +1,219 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Love Question Game
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: "Poppins", sans-serif;
+    }
+  </style>
+ </head>
+ <body class="bg-pink-50 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white max-w-md w-full rounded-3xl shadow-lg p-8 flex flex-col items-center relative overflow-visible" id="app">
+   <img alt="A big pink heart with soft glowing edges symbolizing love" class="w-36 h-36 mb-6" height="150" src="https://storage.googleapis.com/a1aa/image/517ac0a8-6a60-4d4a-9954-d5d536127311.jpg" width="150"/>
+   <h1 class="text-3xl font-semibold text-pink-600 mb-6 text-center">
+    With Love ❤️
+   </h1>
+   <div class="text-center mb-8 px-4 min-h-[96px]" id="question-container">
+    <p class="text-lg text-gray-700 font-medium leading-relaxed" id="question-text">
+    </p>
+   </div>
+   <div class="flex space-x-6 relative z-10">
+    <button class="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full shadow-md transition duration-300" id="yes-btn">
+     Yes
+    </button>
+    <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-8 rounded-full shadow-md transition duration-300 relative" id="no-btn">
+     No
+    </button>
+   </div>
+   <div class="mt-10 flex flex-wrap justify-center gap-2" id="hearts-container">
+   </div>
+  </div>
+  <script>
+   const questions = [
+      "Kya tmhein pasand hai jab mein tumhare kaan mein dheere se bolti hoon?",
+      "Kya tm ne kabhi din mein mere baare mein kuch naughty socha?",
+      "Kya tmhein meri neck p kiss krnay s kuch huta ha?",
+      "Kya tm meri ankhon p patii bndh kr kuch try krna chaogy?",
+      "Kya tmhein pasand hai jab mjhy hosh m n huti ?",
+      "Kya tm ne kabhi socha hai k hum kisi risky jaga try kren?",
+      "Kya tmhein meri voice sun k kabhi kabhi kuch feel hota hai?",
+      "Kya tm mujhe apne lips pe feel krna chahty ho?",
+      "Kya tmhein pasand hai jab mein tmhein aankhon mein dekh k chup Sharma jti hu ?",
+    ];
+
+    const questionText = document.getElementById("question-text");
+    const yesBtn = document.getElementById("yes-btn");
+    const noBtn = document.getElementById("no-btn");
+    const heartsContainer = document.getElementById("hearts-container");
+    const app = document.getElementById("app");
+
+    let currentQuestionIndex = 0;
+    let noClickCount = 0;
+    let noBtnMoved = false;
+    let warned = false;
+    let finalLoveAsked = false;
+
+    function setQuestion(index) {
+      questionText.textContent = questions[index];
+    }
+
+    function createHeart() {
+      const heart = document.createElement("img");
+      heart.src =
+        "https://placehold.co/40x40/ff6f91/fff/png?text=❤";
+      heart.alt =
+        "A small bright pink heart icon symbolizing love and affection";
+      heart.className = "animate-pulse w-10 h-10";
+      heartsContainer.appendChild(heart);
+    }
+
+    function createHug() {
+      const hug = document.createElement("img");
+      hug.src =
+        "https://placehold.co/80x80/ff6f91/fff/png?text=🤗";
+      hug.alt = "A cute hugging face emoji symbolizing a warm hug";
+      hug.className = "animate-bounce w-20 h-20";
+      heartsContainer.appendChild(hug);
+    }
+
+    function createFlyKiss() {
+      const kiss = document.createElement("img");
+      kiss.src =
+        "https://placehold.co/80x80/ff6f91/fff/png?text=😘";
+      kiss.alt = "A flying kiss emoji with heart symbolizing affection";
+      kiss.className = "animate-bounce w-20 h-20";
+      heartsContainer.appendChild(kiss);
+    }
+
+    function createBigHeart() {
+      const bigHeart = document.createElement("img");
+      bigHeart.src =
+        "https://placehold.co/150x150/ff6f91/fff/png?text=❤";
+      bigHeart.alt = "A big bright pink heart symbolizing deep love";
+      bigHeart.className = "animate-pulse w-36 h-36 mt-6";
+      heartsContainer.appendChild(bigHeart);
+    }
+
+    function moveNoButtonRandomly() {
+      const appRect = app.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const maxLeft = appRect.width - btnRect.width - 16;
+      const maxTop = appRect.height - btnRect.height - 16;
+
+      const left = Math.floor(Math.random() * maxLeft);
+      const top = Math.floor(Math.random() * maxTop);
+
+      noBtn.style.position = "absolute";
+      noBtn.style.left = left + "px";
+      noBtn.style.top = top + "px";
+      noBtn.style.transition = "left 0.3s ease, top 0.3s ease";
+      noBtnMoved = true;
+    }
+
+    function resetNoButtonPosition() {
+      noBtn.style.position = "static";
+      noBtn.style.left = "";
+      noBtn.style.top = "";
+      noBtn.style.transition = "";
+      noBtnMoved = false;
+    }
+
+    function handleYesClick() {
+      if (finalLoveAsked) {
+        // Final yes after love question
+        questionText.textContent = "I know you love me ❤️";
+        yesBtn.disabled = true;
+        noBtn.disabled = true;
+        yesBtn.classList.add("opacity-50", "cursor-not-allowed");
+        noBtn.classList.add("opacity-50", "cursor-not-allowed");
+        heartsContainer.innerHTML = "";
+        createHug();
+        createFlyKiss();
+        createBigHeart();
+        return;
+      }
+
+      if (warned) {
+        // If warned and user says yes, continue questions normally
+        warned = false;
+      }
+
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        setQuestion(currentQuestionIndex);
+      } else {
+        // After last question ask "Do you love me?"
+        finalLoveAsked = true;
+        questionText.textContent = "Do you love me?";
+      }
+    }
+
+    function handleNoClick() {
+      if (finalLoveAsked) {
+        // On final love question, no button moves away on hover only
+        return;
+      }
+
+      if (warned) {
+        // If already warned and user clicks no again, "kill" message and disable buttons
+        questionText.textContent =
+          "You chose NO again... You are killed! 💀 Game Over.";
+        yesBtn.disabled = true;
+        noBtn.disabled = true;
+        yesBtn.classList.add("opacity-50", "cursor-not-allowed");
+        noBtn.classList.add("opacity-50", "cursor-not-allowed");
+        heartsContainer.innerHTML = "";
+        return;
+      }
+
+      noClickCount++;
+
+      if (noClickCount > 4) {
+        // After 4 no clicks, only show yes and no buttons and move no button on hover
+        questionText.textContent = "Are you sure? Just say Yes ❤️";
+        yesBtn.style.display = "inline-block";
+        noBtn.style.display = "inline-block";
+        noBtn.textContent = "No";
+        noBtn.style.position = "static";
+        noBtn.style.left = "";
+        noBtn.style.top = "";
+        noBtn.style.transition = "";
+        noBtnMoved = false;
+
+        noBtn.removeEventListener("click", handleNoClick);
+        noBtn.addEventListener("mouseenter", () => {
+          moveNoButtonRandomly();
+        });
+        noBtn.addEventListener("mouseleave", () => {
+          setTimeout(() => {
+            if (noBtnMoved) {
+              resetNoButtonPosition();
+            }
+          }, 2000);
+        });
+        return;
+      }
+
+      // Show warning message and repeat same question
+      warned = true;
+      questionText.textContent =
+        "Warning: If you choose NO again, you will be killed! " + questions[currentQuestionIndex];
+    }
+
+    yesBtn.addEventListener("click", handleYesClick);
+    noBtn.addEventListener("click", handleNoClick);
+
+    // Initialize first question
+    setQuestion(currentQuestionIndex);
+  </script>
+ </body>
+</html>
